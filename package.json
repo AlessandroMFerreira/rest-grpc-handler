@@ -1,5 +1,5 @@
 {
-  "name": "grpc-mock-hub",
+  "name": "rest-grpc-handler",
   "version": "1.0.0",
   "description": "Mock server for rest and grpc requests",
   "main": "index.js",
