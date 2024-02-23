@@ -14,8 +14,7 @@ function createConfiguration() {
 
   if (!fs.existsSync(HTTP_PROXY_CONFIG_FILE)) {
     let data = {
-      port: 50052,
-      endPoints: ['/teste/contato']
+      port: 50052
     }
     fs.writeFileSync(HTTP_PROXY_CONFIG_FILE, JSON.stringify(data), 'utf8');
   }
@@ -28,7 +27,7 @@ function createDefaultMockFolder() {
 }
 
 function getCaseName() {
-  var caseName = '/';
+  var caseName = '';
   try {
     if (fs.existsSync(CASE_FILE)) {
       let mockFile = JSON.parse(fs.readFileSync(CASE_FILE, 'utf8'));
@@ -50,21 +49,45 @@ function getEndPointFolderName(endPoint) {
   return endPointFolderName;
 }
 
-function getMockResponse(endPoint, method) {
+function getRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
+
+  let requestElement = requestCounter.find((element) => element.case === caseName && element.endPoint === endPointFolderName && element.method === methodName);
+
+  if(requestElement)  {
+    let position = requestCounter.indexOf(requestElement);
+    requestCounter[position].numberOfRequests++;
+
+    return requestCounter[position].numberOfRequests;
+  }
+
+  requestCounter.push({
+    case: caseName,
+    endPoint: endPointFolderName,
+    method: methodName,
+    numberOfRequests: 0
+  });
+
+  return 0;
+
+}
+
+function getMockResponse(endPoint, method, requestCounter) {
   try {
     let caseName = getCaseName();
     let endPointFolderName = getEndPointFolderName(endPoint);
     let methodName = method.toLowerCase();
+    let mockFolderPath = `${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}`
+    let requestNumber = getRequestNumber(caseName, endPointFolderName, methodName, requestCounter);
 
     // If there is no mock file, create one
-    if (!fs.existsSync(`${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}/0.json`)) {
-      fs.mkdirSync(`${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}`, { recursive: true })
-      fs.writeFileSync(`${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}/0.json`, '');
+    if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
+      fs.mkdirSync(mockFolderPath, { recursive: true })
+      fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
 
       return {};
     }
 
-    return JSON.parse(fs.readFileSync(`${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}/0.json`, 'utf8'));
+    return JSON.parse(fs.readFileSync(`${mockFolderPath}/${requestNumber}.json`, 'utf8'));
   } catch (error) {
     return {};
   }

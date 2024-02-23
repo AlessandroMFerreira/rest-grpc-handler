@@ -16,7 +16,7 @@ function createDefaultMockFolder() {
 }
 
 function getCaseName() {
-  var caseName = '/';
+  var caseName = '';
   try {
     if (fs.existsSync(CASE_FILE)) {
       let mockFile = JSON.parse(fs.readFileSync(CASE_FILE, 'utf8'));
@@ -29,20 +29,43 @@ function getCaseName() {
   return caseName;
 }
 
-function getMockResponse(packageName, serviceName) {
+function getRequestNumber(caseName, packageName, serviceName, requestCounter) {
+  let requestElement = requestCounter.find(
+    (element) => element.case === caseName && element.packageName === packageName && element.serviceName === serviceName);
+
+  if (requestElement) {
+    let position = requestCounter.indexOf(requestElement);
+    requestCounter[position].numberOfRequests++;
+
+    return requestCounter[position].numberOfRequests;
+  }
+
+  requestCounter.push({
+    case: caseName,
+    packageName: packageName,
+    serviceName: serviceName,
+    numberOfRequests: 0
+  });
+
+  return 0;
+}
+
+function getMockResponse(packageName, serviceName, requestCounter) {
 
   try {
     let caseName = getCaseName();
+    let mockFolderPath = `${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}`;
+    let requestNumber = getRequestNumber(caseName, packageName, serviceName, requestCounter);
 
     // If there is no mock file, create one
-    if (!fs.existsSync(`${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}/0.json`)) {
-      fs.mkdirSync(`${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}`, { recursive: true })
-      fs.writeFileSync(`${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}/0.json`, '');
+    if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
+      fs.mkdirSync(mockFolderPath, { recursive: true })
+      fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
 
       return {};
     }
 
-    return JSON.parse(fs.readFileSync(`${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}/0.json`, 'utf8'));
+    return JSON.parse(fs.readFileSync(`${mockFolderPath}/${requestNumber}.json`, 'utf8'));
   } catch (error) {
     return {};
   }

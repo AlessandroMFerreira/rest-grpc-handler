@@ -1,7 +1,7 @@
 {
   "name": "grpc-mock-hub",
   "version": "1.0.0",
-  "description": "grpc-mock-hub is a versatile and easy-to-use Node.js module designed to simplify the process of mocking gRPC calls. Whether you're a developer testing components or an organization looking to streamline your testing process, grpc-mock-hub provides a comprehensive solution. It dynamically reads your proto files and generates mock servers, allowing you to focus on what matters most - building and testing your application. With grpc-mock-hub, you can create a robust testing environment that caters to your specific needs, making it an essential tool in any developer's toolkit.",
+  "description": "Mock server for rest and grpc requests",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

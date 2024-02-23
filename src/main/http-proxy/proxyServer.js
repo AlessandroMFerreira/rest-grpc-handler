@@ -6,8 +6,8 @@ import {
   loadConfiguration
 } from './setup.js';
 
-// Load the endpoints from a JSON file
 var config;
+var requestCounter = [];
 
 // Create a proxy server
 const proxy = httpProxy.createProxyServer({});
@@ -15,21 +15,14 @@ const proxy = httpProxy.createProxyServer({});
 function startServer() {
   http.createServer(function (req, res) {
     const path = req.url.split('?')[0];
-  
-    const endpoint = config.endPoints.find((endpoint) => endpoint === path);
-  
-    if (endpoint) {
-      const mockedResponse = getMockResponse(endpoint, req.method);
-  
-      if (mockedResponse) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(mockedResponse));
-      } else {
-        proxy.web(req, res, { target: endpoint });
-      }
+
+    const mockedResponse = getMockResponse(path, req.method, requestCounter);
+
+    if (mockedResponse) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(mockedResponse));
     } else {
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('Not found');
+      proxy.web(req, res, { target: path });
     }
   }).listen(config.port, () => {
     console.log(`Http proxy server running on port ${config.port}`);

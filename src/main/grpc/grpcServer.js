@@ -7,6 +7,7 @@ import {
 
 var host;
 var port;
+var requestCounter = [];
 
 function loadConfiguration() {
   const {host: serverHost, port: serverPort} = loadConfigurationFile();
@@ -24,7 +25,7 @@ function startServer() {
         if ('service' in serviceOrMessage) {
           const servicesObj = Object.keys(serviceOrMessage.service).reduce((services, serviceName) => {
             services[serviceName] = (call, callback) => {
-              var returnedValue = getMockResponse(packageName, serviceName);
+              var returnedValue = getMockResponse(packageName, serviceName, requestCounter);
 
               if(!returnedValue){
                 return callback({
