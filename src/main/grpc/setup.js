@@ -71,9 +71,12 @@ function getMockResponse(packageName, serviceName, requestCounter) {
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
       fs.mkdirSync(mockFolderPath, { recursive: true });
 
-      console.log('\n\n=========WARNING=========\n');
-      console.log(`There is no ${mockFolderPath}/${requestNumber}.json. Please provide one.\n\n`);
-      decreaseRequestNumber(caseName, packageName, serviceName, requestCounter);
+      if(requestNumber === 0) {
+        fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
+      } else {
+        decreaseRequestNumber(caseName, packageName, serviceName, requestCounter);
+      }
+      
       return {};
     }
 
