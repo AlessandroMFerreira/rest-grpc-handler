@@ -19,8 +19,12 @@ function startServer() {
     const mockedResponse = getMockResponse(path, req.method, requestCounter);
 
     if (mockedResponse) {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(mockedResponse));
+      let status = mockedResponse.status ? mockedResponse.status : 200;
+      let headers = mockedResponse.headers ? mockedResponse.headers : { 'Content-Type': 'application/json' };
+      let body = mockedResponse.body ? mockedResponse.body : {};
+      
+      res.writeHead(status, headers);
+      res.end(JSON.stringify(body));
     } else {
       proxy.web(req, res, { target: path });
     }
