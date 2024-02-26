@@ -50,6 +50,16 @@ function getRequestNumber(caseName, packageName, serviceName, requestCounter) {
   return 0;
 }
 
+function decreaseRequestNumber(caseName, packageName, serviceName, requestCounter) {
+  let requestElement = requestCounter.find(
+    (element) => element.case === caseName && element.packageName === packageName && element.serviceName === serviceName);
+
+  if (requestElement) {
+    let position = requestCounter.indexOf(requestElement);
+    requestCounter[position].numberOfRequests--;
+  }
+}
+
 function getMockResponse(packageName, serviceName, requestCounter) {
 
   try {
@@ -57,11 +67,13 @@ function getMockResponse(packageName, serviceName, requestCounter) {
     let mockFolderPath = `${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}`;
     let requestNumber = getRequestNumber(caseName, packageName, serviceName, requestCounter);
 
-    // If there is no mock file, create one
+    // If there is no mock folder, create one
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
-      fs.mkdirSync(mockFolderPath, { recursive: true })
-      fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
+      fs.mkdirSync(mockFolderPath, { recursive: true });
 
+      console.log('\n\n=========WARNING=========\n');
+      console.log(`There is no ${mockFolderPath}/${requestNumber}.json. Please provide one.\n\n`);
+      decreaseRequestNumber(caseName, packageName, serviceName, requestCounter);
       return {};
     }
 

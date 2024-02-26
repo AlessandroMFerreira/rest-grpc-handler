@@ -70,6 +70,16 @@ function getRequestNumber(caseName, endPointFolderName, methodName, requestCount
   return 0;
 
 }
+function decreaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
+  let requestElement = requestCounter.find(
+    (element) => element.case === caseName && element.endPoint === endPointFolderName 
+    && element.method === methodName);
+  if(requestElement)  {
+    let position = requestCounter.indexOf(requestElement);
+    requestCounter[position].numberOfRequests--;
+
+  }
+}
 
 function getMockResponse(endPoint, method, requestCounter) {
   try {
@@ -79,10 +89,14 @@ function getMockResponse(endPoint, method, requestCounter) {
     let mockFolderPath = `${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}`
     let requestNumber = getRequestNumber(caseName, endPointFolderName, methodName, requestCounter);
 
-    // If there is no mock file, create one
+    // If there is no mock folder, create one
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
       fs.mkdirSync(mockFolderPath, { recursive: true })
-      fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
+
+      console.log('\n\n=========WARNING=========\n');
+      console.log(`There is no ${mockFolderPath}/${requestNumber}.json. Please provide one.\n\n`);
+
+      decreaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter);
 
       return {};
     }
