@@ -35,8 +35,6 @@ function getRequestNumber(caseName, packageName, serviceName, requestCounter) {
 
   if (requestElement) {
     let position = requestCounter.indexOf(requestElement);
-    requestCounter[position].numberOfRequests++;
-
     return requestCounter[position].numberOfRequests;
   }
 
@@ -48,6 +46,15 @@ function getRequestNumber(caseName, packageName, serviceName, requestCounter) {
   });
 
   return 0;
+}
+
+function increaseRequestNumber(caseName, packageName, serviceName, requestCounter) {
+  let requestElement = requestCounter.find(
+    (element) => element.case === caseName && element.packageName === packageName && element.serviceName === serviceName);
+  if (requestElement) {
+    let position = requestCounter.indexOf(requestElement);
+    requestCounter[position].numberOfRequests++;
+  }
 }
 
 function decreaseRequestNumber(caseName, packageName, serviceName, requestCounter) {
@@ -80,6 +87,7 @@ function getMockResponse(packageName, serviceName, requestCounter) {
       return {};
     }
 
+    increaseRequestNumber(caseName, packageName, serviceName, requestCounter);
     return JSON.parse(fs.readFileSync(`${mockFolderPath}/${requestNumber}.json`, 'utf8'));
   } catch (error) {
     return {};

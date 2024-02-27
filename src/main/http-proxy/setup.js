@@ -55,8 +55,6 @@ function getRequestNumber(caseName, endPointFolderName, methodName, requestCount
 
   if(requestElement)  {
     let position = requestCounter.indexOf(requestElement);
-    requestCounter[position].numberOfRequests++;
-
     return requestCounter[position].numberOfRequests;
   }
 
@@ -70,6 +68,17 @@ function getRequestNumber(caseName, endPointFolderName, methodName, requestCount
   return 0;
 
 }
+
+function increaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
+  let requestElement = requestCounter.find(
+    (element) => element.case === caseName && element.endPoint === endPointFolderName 
+    && element.method === methodName);
+  if(requestElement)  {
+    let position = requestCounter.indexOf(requestElement);
+    requestCounter[position].numberOfRequests++;
+  }
+}
+
 function decreaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
   let requestElement = requestCounter.find(
     (element) => element.case === caseName && element.endPoint === endPointFolderName 
@@ -102,6 +111,7 @@ function getMockResponse(endPoint, method, requestCounter) {
       return {};
     }
 
+    increaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter);
     return JSON.parse(fs.readFileSync(`${mockFolderPath}/${requestNumber}.json`, 'utf8'));
   } catch (error) {
     return {};
