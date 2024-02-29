@@ -70,7 +70,7 @@ function getMockResponse(projectRoot, packageName, serviceName, requestCounter) 
   try {
     let caseName = getCaseName(projectRoot);
     let mockFolderPath = `${projectRoot}/${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}`;
-    let requestNumber = getRequestNumber(caseName, packageName, serviceName, requestCounter);
+    let requestNumber = getRequestNumber(projectRoot, caseName, packageName, serviceName, requestCounter);
 
     // If there is no mock folder, create one
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {

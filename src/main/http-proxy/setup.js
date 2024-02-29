@@ -80,7 +80,7 @@ function getMockResponse(projectRoot, endPoint, method, requestCounter) {
     let endPointFolderName = getEndPointFolderName(endPoint);
     let methodName = method.toLowerCase();
     let mockFolderPath = `${projectRoot}/${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}`
-    let requestNumber = getRequestNumber(caseName, endPointFolderName, methodName, requestCounter);
+    let requestNumber = getRequestNumber(projectRoot, caseName, endPointFolderName, methodName, requestCounter);
 
     // If there is no mock folder, create one
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
