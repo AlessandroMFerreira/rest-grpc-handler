@@ -1,13 +1,8 @@
 import fs from 'fs';
 import { 
-  CONFIG_FOLDER,
-  CONFIG_FLIE,
-  MOCK_FOLDER,
-  GRPC_MOCK_FOLDER,
   HTTP_PROXY_MOCK_FOLDER,
-  PROTO_FOLDER,
   CASE_FILE
-} from '../util.js';
+} from '../utils.js';
 
 function getCaseName(projectRoot) {
   var caseName = '';
