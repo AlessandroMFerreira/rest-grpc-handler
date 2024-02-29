@@ -4,14 +4,15 @@ import protoLoader from '@grpc/proto-loader';
 import {
   GRPC_MOCK_FOLDER,
   PROTO_FOLDER,
-  CASE_FILE
+  CASE_FILE,
+  REQUEST_MANAGEMENT
 } from '../utils.js';
 
 function getCaseName(projectRoot) {
   var caseName = '';
   try {
     if (fs.existsSync(`${projectRoot}/${CASE_FILE}`)) {
-      let mockFile = JSON.parse(fs.readFileSync(CASE_FILE, 'utf8'));
+      let mockFile = JSON.parse(fs.readFileSync(`${projectRoot}/${CASE_FILE}`, 'utf8'));
       caseName = mockFile.case ? `${mockFile.case}/` : '';
     }
   } catch (error) {
@@ -24,9 +25,7 @@ function getCaseName(projectRoot) {
 function reloadCounter(projectRoot) {
   try {
     let requestManagement = JSON.parse(fs.readFileSync(`${projectRoot}/${REQUEST_MANAGEMENT}`, 'utf8'));
-    if (requestManagement.reloadCounter) {
-      return true;
-    }
+    return requestManagement.reloadCounter;
   } catch (error) {
     return false;
   }

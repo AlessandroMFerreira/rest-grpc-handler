@@ -4,7 +4,8 @@ import startGrpcServer from './src/main/grpc/grpcServer.js';
 import startHttpProxy from './src/main/http-proxy/proxyServer.js';
 import { init, loadConfigurationFile } from './src/main/init.js';
 
-const projectRoot = process.cwd();
+// const projectRoot = process.cwd();
+const projectRoot = process.env.PROJECT_ROOT;
 
 init(projectRoot);
 const config = loadConfigurationFile(projectRoot);

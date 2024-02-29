@@ -31,9 +31,7 @@ function getEndPointFolderName(endPoint) {
 function reloadCounter(projectRoot) {
   try {
     let requestManagement = JSON.parse(fs.readFileSync(`${projectRoot}/${REQUEST_MANAGEMENT}`, 'utf8'));
-    if (requestManagement.reloadCounter) {
-      return true;
-    }
+    return requestManagement.reloadCounter;
   } catch (error) {
     return false;
   }
