@@ -17,7 +17,7 @@ function createConfiguration(projectRoot) {
   if (!fs.existsSync(`${projectRoot}/${CONFIG_FLIE}`)) {
     let obj = {
       grpc:{
-        host:50051,
+        port:50051,
         enabled: true
       },
       http: {
