@@ -36,7 +36,7 @@ function startServer(projectRoot, config) {
       return;
     }
 
-    console.log(`Grpc server running on port ${port}`);
+    console.log(`Grpc server running on port ${config.grpc.port}`);
   });
 }
 
