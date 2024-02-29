@@ -4,8 +4,7 @@ import protoLoader from '@grpc/proto-loader';
 import {
   GRPC_MOCK_FOLDER,
   PROTO_FOLDER,
-  CASE_FILE,
-  REQUEST_MANAGEMENT
+  CASE_FILE
 } from '../utils.js';
 
 function getCaseName(projectRoot) {

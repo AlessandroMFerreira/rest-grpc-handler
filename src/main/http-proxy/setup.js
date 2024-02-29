@@ -1,8 +1,7 @@
 import fs from 'fs';
 import {
   HTTP_PROXY_MOCK_FOLDER,
-  CASE_FILE,
-  REQUEST_MANAGEMENT
+  CASE_FILE
 } from '../utils.js';
 import { request } from 'http';
 
