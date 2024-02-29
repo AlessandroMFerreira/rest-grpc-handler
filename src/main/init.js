@@ -7,7 +7,6 @@ import {
   HTTP_PROXY_MOCK_FOLDER,
   PROTO_FOLDER,
   CASE_FILE,
-  REQUEST_MANAGEMENT
 } from './utils.js';
 
 function createConfiguration(projectRoot) {
@@ -41,13 +40,6 @@ function createConfiguration(projectRoot) {
 function createDefaultMockFolder(projectRoot) {
   if (!fs.existsSync(`${projectRoot}/${MOCK_FOLDER}`)) {
     fs.mkdirSync(`${projectRoot}/${MOCK_FOLDER}`, { recursive: true });
-  }
-
-  if(!fs.existsSync(`${projectRoot}/${REQUEST_MANAGEMENT}`)){
-    let obj = {
-      reloadCounter: false,
-    }
-    fs.writeFileSync(`${projectRoot}/${REQUEST_MANAGEMENT}`, JSON.stringify(obj) , 'utf8');
   }
 
   if (!fs.existsSync(`${projectRoot}/${GRPC_MOCK_FOLDER}`)) {
