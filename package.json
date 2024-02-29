@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node index.js"
   },
+  "bin": {
+    "rest-grpc-handler": "./index.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

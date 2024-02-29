@@ -1,36 +1,19 @@
 import fs from 'fs';
-import {
-  HTTP_PROXY_CONFIG_FOLDER,
-  HTTP_PROXY_CONFIG_FILE,
+import { 
+  CONFIG_FOLDER,
+  CONFIG_FLIE,
+  MOCK_FOLDER,
+  GRPC_MOCK_FOLDER,
   HTTP_PROXY_MOCK_FOLDER,
+  PROTO_FOLDER,
   CASE_FILE
 } from '../util.js';
 
-function createConfiguration() {
-  // Creates the configuration folder if it does not exist
-  if (!fs.existsSync(HTTP_PROXY_CONFIG_FOLDER)) {
-    fs.mkdirSync(HTTP_PROXY_CONFIG_FOLDER, { recursive: true });
-  }
-
-  if (!fs.existsSync(HTTP_PROXY_CONFIG_FILE)) {
-    let data = {
-      port: 50052
-    }
-    fs.writeFileSync(HTTP_PROXY_CONFIG_FILE, JSON.stringify(data), 'utf8');
-  }
-}
-
-function createDefaultMockFolder() {
-  if (!fs.existsSync(HTTP_PROXY_MOCK_FOLDER)) {
-    fs.mkdirSync(HTTP_PROXY_MOCK_FOLDER, { recursive: true });
-  }
-}
-
-function getCaseName() {
+function getCaseName(projectRoot) {
   var caseName = '';
   try {
-    if (fs.existsSync(CASE_FILE)) {
-      let mockFile = JSON.parse(fs.readFileSync(CASE_FILE, 'utf8'));
+    if (fs.existsSync(`${projectRoot}/${CASE_FILE}`)) {
+      let mockFile = JSON.parse(fs.readFileSync(`${projectRoot}/${CASE_FILE}`, 'utf8'));
       caseName = mockFile.case ? `${mockFile.case}/` : '';
     }
   } catch (error) {
@@ -79,23 +62,12 @@ function increaseRequestNumber(caseName, endPointFolderName, methodName, request
   }
 }
 
-function decreaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
-  let requestElement = requestCounter.find(
-    (element) => element.case === caseName && element.endPoint === endPointFolderName 
-    && element.method === methodName);
-  if(requestElement)  {
-    let position = requestCounter.indexOf(requestElement);
-    requestCounter[position].numberOfRequests--;
-
-  }
-}
-
-function getMockResponse(endPoint, method, requestCounter) {
+function getMockResponse(projectRoot, endPoint, method, requestCounter) {
   try {
-    let caseName = getCaseName();
+    let caseName = getCaseName(projectRoot);
     let endPointFolderName = getEndPointFolderName(endPoint);
     let methodName = method.toLowerCase();
-    let mockFolderPath = `${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}`
+    let mockFolderPath = `${projectRoot}/${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}`
     let requestNumber = getRequestNumber(caseName, endPointFolderName, methodName, requestCounter);
 
     // If there is no mock folder, create one
@@ -104,10 +76,8 @@ function getMockResponse(endPoint, method, requestCounter) {
 
       if(requestNumber === 0){
         fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
-      } else {
-        decreaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter);
       }
-      
+
       return {};
     }
 
@@ -118,25 +88,6 @@ function getMockResponse(endPoint, method, requestCounter) {
   }
 }
 
-function loadConfiguration() {
-  try {
-    return JSON.parse(fs.readFileSync(HTTP_PROXY_CONFIG_FILE, 'utf8'));
-  } catch (error) {
-    throw new Error('Error loading configuration file');
-  }
-}
-
-function init() {
-  if (!process.env.ROOT_DIR) {
-    throw new Error('ROOT_DIR environment variable is required');
-  }
-
-  createConfiguration();
-  createDefaultMockFolder();
-}
-
 export {
-  init,
-  getMockResponse,
-  loadConfiguration
+  getMockResponse
 }

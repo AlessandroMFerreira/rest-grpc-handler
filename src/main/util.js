@@ -1,20 +1,19 @@
-const GRPC_CONFIG_FOLDER = `${process.env.ROOT_DIR}/rest_grpc_handler/grpc`;
-const GRPC_PROTO_FOLDER = `${GRPC_CONFIG_FOLDER}/protos`;
-const GRPC_MOCK_FOLDER = `${process.env.ROOT_DIR}/requests/grpc`;
-const GRPC_CONFIG_FILE = `${GRPC_CONFIG_FOLDER}/config.json`;
-const CASE_FILE = `${process.env.ROOT_DIR}/case.json`;
-const HTTP_PROXY_CONFIG_FOLDER = `${process.env.ROOT_DIR}/rest_grpc_handler/http-proxy`;
-const HTTP_PROXY_CONFIG_FILE = `${HTTP_PROXY_CONFIG_FOLDER}/config.json`;
-const HTTP_PROXY_MOCK_FOLDER = `${process.env.ROOT_DIR}/requests/http-proxy`;
+const CONFIG_FOLDER = 'rest_grpc_handler';
+const CONFIG_FLIE = `${CONFIG_FOLDER}/config.json`;
+const MOCK_FOLDER = `requests`;
+const GRPC_MOCK_FOLDER = `${MOCK_FOLDER}/grpc`;
+const HTTP_PROXY_MOCK_FOLDER = `${MOCK_FOLDER}/http-proxy`;
+const PROTO_FOLDER = `${CONFIG_FOLDER}/protos`;
+const CASE_FILE = `case.json`;
+
 
 
 export { 
-    GRPC_CONFIG_FOLDER,
-    GRPC_PROTO_FOLDER,
+    CONFIG_FOLDER,
+    CONFIG_FLIE,
+    MOCK_FOLDER,
     GRPC_MOCK_FOLDER,
-    GRPC_CONFIG_FILE,
-    CASE_FILE,
-    HTTP_PROXY_CONFIG_FOLDER,
-    HTTP_PROXY_CONFIG_FILE,
-    HTTP_PROXY_MOCK_FOLDER
+    HTTP_PROXY_MOCK_FOLDER,
+    PROTO_FOLDER,
+    CASE_FILE
 };

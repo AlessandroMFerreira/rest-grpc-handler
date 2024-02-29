@@ -1,31 +1,20 @@
 import  grpc from '@grpc/grpc-js';
 import { 
-  init,
   loadProtoFiles,
-  loadConfigurationFile,
   getMockResponse } from './setup.js';
 
-var host;
-var port;
 var requestCounter = [];
 
-function loadConfiguration() {
-  const {host: serverHost, port: serverPort} = loadConfigurationFile();
-  host = serverHost;
-  port = serverPort;
-}
-
-function startServer() {
-  loadConfiguration();
+function startServer(projectRoot, config) {
   var server = new grpc.Server();
-  let protos = loadProtoFiles();
+  let protos = loadProtoFiles(projectRoot);
   protos.forEach((proto) => {
     Object.entries(proto).forEach(([packageName, packageObj]) => {
       Object.entries(packageObj).forEach(([serviceOrMessageName, serviceOrMessage]) => {
         if ('service' in serviceOrMessage) {
           const servicesObj = Object.keys(serviceOrMessage.service).reduce((services, serviceName) => {
             services[serviceName] = (call, callback) => {
-              var returnedValue = getMockResponse(packageName, serviceName, requestCounter);
+              var returnedValue = getMockResponse(projectRoot, packageName, serviceName, requestCounter);
 
               if(!returnedValue){
                 return callback({
@@ -41,7 +30,7 @@ function startServer() {
       });
     });
   });
-  server.bindAsync(`${host}:${port}`, grpc.ServerCredentials.createInsecure(), (err) => {
+  server.bindAsync(`localhost:${config.grpc.port}`, grpc.ServerCredentials.createInsecure(), (err) => {
     if (err) {
       console.log(`Error starting grpc server: ${err}`)
       return;
@@ -51,10 +40,9 @@ function startServer() {
   });
 }
 
-function start() {
+function start(projectRoot, config) {
   try {
-    init();
-    startServer(); 
+    startServer(projectRoot, config); 
   } catch (error) {
     throw (error);
   }

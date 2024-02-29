@@ -1,24 +1,20 @@
 import fs from 'fs';
 import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
-import {
-  GRPC_CONFIG_FOLDER,
-  GRPC_PROTO_FOLDER,
+import { 
+  CONFIG_FOLDER,
+  CONFIG_FLIE,
+  MOCK_FOLDER,
   GRPC_MOCK_FOLDER,
-  GRPC_CONFIG_FILE,
+  HTTP_PROXY_MOCK_FOLDER,
+  PROTO_FOLDER,
   CASE_FILE
 } from '../util.js';
 
-function createDefaultMockFolder() {
-  if (!fs.existsSync(GRPC_MOCK_FOLDER)) {
-    fs.mkdirSync(GRPC_MOCK_FOLDER, { recursive: true });
-  }
-}
-
-function getCaseName() {
+function getCaseName(projectRoot) {
   var caseName = '';
   try {
-    if (fs.existsSync(CASE_FILE)) {
+    if (fs.existsSync(`${projectRoot}/${CASE_FILE}`)) {
       let mockFile = JSON.parse(fs.readFileSync(CASE_FILE, 'utf8'));
       caseName = mockFile.case ? `${mockFile.case}/` : '';
     }
@@ -57,21 +53,11 @@ function increaseRequestNumber(caseName, packageName, serviceName, requestCounte
   }
 }
 
-function decreaseRequestNumber(caseName, packageName, serviceName, requestCounter) {
-  let requestElement = requestCounter.find(
-    (element) => element.case === caseName && element.packageName === packageName && element.serviceName === serviceName);
-
-  if (requestElement) {
-    let position = requestCounter.indexOf(requestElement);
-    requestCounter[position].numberOfRequests--;
-  }
-}
-
-function getMockResponse(packageName, serviceName, requestCounter) {
+function getMockResponse(projectRoot, packageName, serviceName, requestCounter) {
 
   try {
-    let caseName = getCaseName();
-    let mockFolderPath = `${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}`;
+    let caseName = getCaseName(projectRoot);
+    let mockFolderPath = `${projectRoot}/${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}`;
     let requestNumber = getRequestNumber(caseName, packageName, serviceName, requestCounter);
 
     // If there is no mock folder, create one
@@ -80,10 +66,8 @@ function getMockResponse(packageName, serviceName, requestCounter) {
 
       if(requestNumber === 0) {
         fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
-      } else {
-        decreaseRequestNumber(caseName, packageName, serviceName, requestCounter);
-      }
-      
+      }    
+
       return {};
     }
 
@@ -94,31 +78,11 @@ function getMockResponse(packageName, serviceName, requestCounter) {
   }
 }
 
-function createConfiguration() {
-  // Creates the configuration folder if it does not exist
-  if (!fs.existsSync(GRPC_CONFIG_FOLDER)) {
-    fs.mkdirSync(GRPC_CONFIG_FOLDER, { recursive: true });
-  }
-  // Creates configuration file if it does not exist
-  if (!fs.existsSync(GRPC_CONFIG_FILE)) {
-    let data = {
-      host: 'localhost',
-      port: 50051
-    }
-    fs.writeFileSync(GRPC_CONFIG_FILE, JSON.stringify(data), 'utf8');
-  }
-
-  // Creates proto folder if it does not exist
-  if (!fs.existsSync(GRPC_PROTO_FOLDER)) {
-    fs.mkdirSync(GRPC_PROTO_FOLDER, { recursive: true });
-  }
-}
-
-function loadProtoFiles() {
+function loadProtoFiles(projectRoot) {
   try {
-    let packageDefinition = fs.readdirSync(GRPC_PROTO_FOLDER).map(el => {
+    let packageDefinition = fs.readdirSync(`${projectRoot}/${PROTO_FOLDER}`).map(el => {
       return protoLoader.loadSync(
-        `${GRPC_PROTO_FOLDER}/${el}`,
+        `${projectRoot}/${PROTO_FOLDER}/${el}`,
         {
           keepCase: true,
           longs: String,
@@ -135,27 +99,7 @@ function loadProtoFiles() {
   }
 }
 
-function loadConfigurationFile() {
-  try {
-    return JSON.parse(fs.readFileSync(GRPC_CONFIG_FILE, 'utf8'));
-  } catch (error) {
-    throw new Error('Error loading configuration file');
-  }
-
-}
-
-function init() {
-  if (!process.env.ROOT_DIR) {
-    throw new Error('ROOT_DIR environment variable is required');
-  }
-
-  createConfiguration();
-  createDefaultMockFolder();
-}
-
 export {
-  init,
   loadProtoFiles,
-  loadConfigurationFile,
   getMockResponse
 };
