@@ -4,6 +4,7 @@ import {
   CASE_FILE,
   REQUEST_MANAGEMENT
 } from '../utils.js';
+import { request } from 'http';
 
 function getCaseName(projectRoot) {
   var caseName = '';
@@ -84,7 +85,9 @@ function getMockResponse(projectRoot, endPoint, method, requestCounter) {
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
       fs.mkdirSync(mockFolderPath, { recursive: true })
 
-      fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, JSON.stringify({}), 'utf8');
+      if (requestNumber === 0) {
+        fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, JSON.stringify({}), 'utf8');
+      }
 
       return {};
     }
