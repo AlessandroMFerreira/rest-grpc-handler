@@ -1,7 +1,8 @@
 import fs from 'fs';
-import { 
+import {
   HTTP_PROXY_MOCK_FOLDER,
-  CASE_FILE
+  CASE_FILE,
+  REQUEST_MANAGEMENT
 } from '../utils.js';
 
 function getCaseName(projectRoot) {
@@ -27,31 +28,47 @@ function getEndPointFolderName(endPoint) {
   return endPointFolderName;
 }
 
-function getRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
-
-  let requestElement = requestCounter.find((element) => element.case === caseName && element.endPoint === endPointFolderName && element.method === methodName);
-
-  if(requestElement)  {
-    let position = requestCounter.indexOf(requestElement);
-    return requestCounter[position].numberOfRequests;
+function reloadCounter(projectRoot) {
+  try {
+    let requestManagement = JSON.parse(fs.readFileSync(`${projectRoot}/${REQUEST_MANAGEMENT}`, 'utf8'));
+    if (requestManagement.reloadCounter) {
+      return true;
+    }
+  } catch (error) {
+    return false;
   }
+}
 
-  requestCounter.push({
-    case: caseName,
-    endPoint: endPointFolderName,
-    method: methodName,
-    numberOfRequests: 0
-  });
+function getRequestNumber(projectRoot, caseName, endPointFolderName, methodName, requestCounter) {
 
-  return 0;
+  if (reloadCounter(projectRoot)) {
+    requestCounter = [];
+    return 0;
+  } else {
+    let requestElement = requestCounter.find((element) => element.case === caseName && element.endPoint === endPointFolderName && element.method === methodName);
+
+    if (requestElement) {
+      let position = requestCounter.indexOf(requestElement);
+      return requestCounter[position].numberOfRequests;
+    }
+
+    requestCounter.push({
+      case: caseName,
+      endPoint: endPointFolderName,
+      method: methodName,
+      numberOfRequests: 0
+    });
+
+    return 0;
+  }
 
 }
 
 function increaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
   let requestElement = requestCounter.find(
-    (element) => element.case === caseName && element.endPoint === endPointFolderName 
-    && element.method === methodName);
-  if(requestElement)  {
+    (element) => element.case === caseName && element.endPoint === endPointFolderName
+      && element.method === methodName);
+  if (requestElement) {
     let position = requestCounter.indexOf(requestElement);
     requestCounter[position].numberOfRequests++;
   }
@@ -69,9 +86,7 @@ function getMockResponse(projectRoot, endPoint, method, requestCounter) {
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
       fs.mkdirSync(mockFolderPath, { recursive: true })
 
-      if(requestNumber === 0){
-        fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
-      }
+      fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, JSON.stringify({}), 'utf8');
 
       return {};
     }

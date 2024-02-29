@@ -1,7 +1,7 @@
 import fs from 'fs';
 import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
-import { 
+import {
   GRPC_MOCK_FOLDER,
   PROTO_FOLDER,
   CASE_FILE
@@ -21,23 +21,39 @@ function getCaseName(projectRoot) {
   return caseName;
 }
 
-function getRequestNumber(caseName, packageName, serviceName, requestCounter) {
-  let requestElement = requestCounter.find(
-    (element) => element.case === caseName && element.packageName === packageName && element.serviceName === serviceName);
-
-  if (requestElement) {
-    let position = requestCounter.indexOf(requestElement);
-    return requestCounter[position].numberOfRequests;
+function reloadCounter(projectRoot) {
+  try {
+    let requestManagement = JSON.parse(fs.readFileSync(`${projectRoot}/${REQUEST_MANAGEMENT}`, 'utf8'));
+    if (requestManagement.reloadCounter) {
+      return true;
+    }
+  } catch (error) {
+    return false;
   }
+}
 
-  requestCounter.push({
-    case: caseName,
-    packageName: packageName,
-    serviceName: serviceName,
-    numberOfRequests: 0
-  });
+function getRequestNumber(projectRoot, caseName, packageName, serviceName, requestCounter) {
+  if (reloadCounter(projectRoot)) {
+    requestCounter = [];
+    return 0;
+  } else {
+    let requestElement = requestCounter.find(
+      (element) => element.case === caseName && element.packageName === packageName && element.serviceName === serviceName);
 
-  return 0;
+    if (requestElement) {
+      let position = requestCounter.indexOf(requestElement);
+      return requestCounter[position].numberOfRequests;
+    }
+
+    requestCounter.push({
+      case: caseName,
+      packageName: packageName,
+      serviceName: serviceName,
+      numberOfRequests: 0
+    });
+
+    return 0;
+  }
 }
 
 function increaseRequestNumber(caseName, packageName, serviceName, requestCounter) {
@@ -60,9 +76,7 @@ function getMockResponse(projectRoot, packageName, serviceName, requestCounter) 
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
       fs.mkdirSync(mockFolderPath, { recursive: true });
 
-      if(requestNumber === 0) {
-        fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, '');
-      }    
+        fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, JSON.stringify({}), 'utf8');
 
       return {};
     }
