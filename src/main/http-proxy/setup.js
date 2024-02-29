@@ -29,37 +29,27 @@ function getEndPointFolderName(endPoint) {
   return endPointFolderName;
 }
 
-function reloadCounter(projectRoot) {
-  try {
-    let requestManagement = JSON.parse(fs.readFileSync(`${projectRoot}/${REQUEST_MANAGEMENT}`, 'utf8'));
-    return requestManagement.reloadCounter;
-  } catch (error) {
-    return false;
+
+
+function getRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
+
+
+  let requestElement = requestCounter.find((element) => element.case === caseName && element.endPoint === endPointFolderName && element.method === methodName);
+
+  if (requestElement) {
+    let position = requestCounter.indexOf(requestElement);
+    return requestCounter[position].numberOfRequests;
   }
-}
 
-function getRequestNumber(projectRoot, caseName, endPointFolderName, methodName, requestCounter) {
+  requestCounter.push({
+    case: caseName,
+    endPoint: endPointFolderName,
+    method: methodName,
+    numberOfRequests: 0
+  });
 
-  if (reloadCounter(projectRoot)) {
-    requestCounter = [];
-    return 0;
-  } else {
-    let requestElement = requestCounter.find((element) => element.case === caseName && element.endPoint === endPointFolderName && element.method === methodName);
+  return 0;
 
-    if (requestElement) {
-      let position = requestCounter.indexOf(requestElement);
-      return requestCounter[position].numberOfRequests;
-    }
-
-    requestCounter.push({
-      case: caseName,
-      endPoint: endPointFolderName,
-      method: methodName,
-      numberOfRequests: 0
-    });
-
-    return 0;
-  }
 
 }
 
@@ -79,7 +69,7 @@ function getMockResponse(projectRoot, endPoint, method, requestCounter) {
     let endPointFolderName = getEndPointFolderName(endPoint);
     let methodName = method.toLowerCase();
     let mockFolderPath = `${projectRoot}/${HTTP_PROXY_MOCK_FOLDER}/${caseName}${endPointFolderName}/${methodName}`
-    let requestNumber = getRequestNumber(projectRoot, caseName, endPointFolderName, methodName, requestCounter);
+    let requestNumber = getRequestNumber(caseName, endPointFolderName, methodName, requestCounter);
 
     // If there is no mock folder, create one
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {

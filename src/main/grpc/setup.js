@@ -22,37 +22,25 @@ function getCaseName(projectRoot) {
   return caseName;
 }
 
-function reloadCounter(projectRoot) {
-  try {
-    let requestManagement = JSON.parse(fs.readFileSync(`${projectRoot}/${REQUEST_MANAGEMENT}`, 'utf8'));
-    return requestManagement.reloadCounter;
-  } catch (error) {
-    return false;
+function getRequestNumber(caseName, packageName, serviceName, requestCounter) {
+
+  let requestElement = requestCounter.find(
+    (element) => element.case === caseName && element.packageName === packageName && element.serviceName === serviceName);
+
+  if (requestElement) {
+    let position = requestCounter.indexOf(requestElement);
+    return requestCounter[position].numberOfRequests;
   }
-}
 
-function getRequestNumber(projectRoot, caseName, packageName, serviceName, requestCounter) {
-  if (reloadCounter(projectRoot)) {
-    requestCounter = [];
-    return 0;
-  } else {
-    let requestElement = requestCounter.find(
-      (element) => element.case === caseName && element.packageName === packageName && element.serviceName === serviceName);
+  requestCounter.push({
+    case: caseName,
+    packageName: packageName,
+    serviceName: serviceName,
+    numberOfRequests: 0
+  });
 
-    if (requestElement) {
-      let position = requestCounter.indexOf(requestElement);
-      return requestCounter[position].numberOfRequests;
-    }
+  return 0;
 
-    requestCounter.push({
-      case: caseName,
-      packageName: packageName,
-      serviceName: serviceName,
-      numberOfRequests: 0
-    });
-
-    return 0;
-  }
 }
 
 function increaseRequestNumber(caseName, packageName, serviceName, requestCounter) {
@@ -69,7 +57,7 @@ function getMockResponse(projectRoot, packageName, serviceName, requestCounter) 
   try {
     let caseName = getCaseName(projectRoot);
     let mockFolderPath = `${projectRoot}/${GRPC_MOCK_FOLDER}/${caseName}${packageName}/${serviceName}`;
-    let requestNumber = getRequestNumber(projectRoot, caseName, packageName, serviceName, requestCounter);
+    let requestNumber = getRequestNumber(caseName, packageName, serviceName, requestCounter);
 
     // If there is no mock folder, create one
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
