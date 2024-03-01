@@ -3,7 +3,6 @@ import {
   HTTP_PROXY_MOCK_FOLDER,
   CASE_FILE
 } from '../utils.js';
-import { request } from 'http';
 
 function getCaseName(projectRoot) {
   var caseName = '';
@@ -48,8 +47,6 @@ function getRequestNumber(caseName, endPointFolderName, methodName, requestCount
   });
 
   return 0;
-
-
 }
 
 function increaseRequestNumber(caseName, endPointFolderName, methodName, requestCounter) {
@@ -86,6 +83,14 @@ function getMockResponse(projectRoot, endPoint, method, requestCounter) {
   }
 }
 
+function resetRequestCounter(requestCounter, res) {
+  requestCounter = [];
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({}));
+  return;
+}
+
 export {
-  getMockResponse
+  getMockResponse,
+  resetRequestCounter
 }

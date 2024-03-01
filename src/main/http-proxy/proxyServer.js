@@ -2,16 +2,20 @@ import http from 'http';
 import httpProxy from 'http-proxy';
 import {
   getMockResponse,
+  resetRequestCounter
 } from './setup.js';
 
-var requestCounter = [];
 
 // Create a proxy server
 const proxy = httpProxy.createProxyServer({});
 
-function startServer(projectRoot, config) {
+function startServer(projectRoot, config, requestCounter) {
   http.createServer(function (req, res) {
     const path = req.url.split('?')[0];
+
+    if(path.includes('/reset')){
+      resetRequestCounter(requestCounter, res);
+    }
 
     const mockedResponse = getMockResponse(projectRoot, path, req.method, requestCounter);
 
@@ -33,9 +37,9 @@ function startServer(projectRoot, config) {
   });
 }
 
-function start(projectRoot, config) {
+function start(projectRoot, config, requestCounter) {
   try {
-    startServer(projectRoot, config);
+    startServer(projectRoot, config, requestCounter);
   } catch (error) {
     throw error;
   }

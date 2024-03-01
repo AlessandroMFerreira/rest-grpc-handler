@@ -3,9 +3,7 @@ import {
   loadProtoFiles,
   getMockResponse } from './setup.js';
 
-var requestCounter = [];
-
-function startServer(projectRoot, config) {
+function startServer(projectRoot, config, requestCounter) {
   var server = new grpc.Server();
   let protos = loadProtoFiles(projectRoot);
   protos.forEach((proto) => {
@@ -40,9 +38,9 @@ function startServer(projectRoot, config) {
   });
 }
 
-function start(projectRoot, config) {
+function start(projectRoot, config, requestCounter) {
   try {
-    startServer(projectRoot, config); 
+    startServer(projectRoot, config, requestCounter); 
   } catch (error) {
     throw (error);
   }
