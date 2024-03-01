@@ -3,7 +3,6 @@ import {
   HTTP_PROXY_MOCK_FOLDER,
   CASE_FILE
 } from '../utils.js';
-import { sensitiveHeaders } from 'http2';
 
 function getCaseName(projectRoot) {
   var caseName = '';

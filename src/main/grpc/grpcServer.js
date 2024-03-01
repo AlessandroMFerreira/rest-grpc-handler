@@ -28,13 +28,13 @@ function startServer(projectRoot, config, requestCounter) {
       });
     });
   });
-  server.bindAsync(`localhost:${config.grpc.port}`, grpc.ServerCredentials.createInsecure(), (err) => {
+  server.bindAsync(`localhost:${config.port}`, grpc.ServerCredentials.createInsecure(), (err) => {
     if (err) {
       console.log(`Error starting grpc server: ${err}`)
       return;
     }
 
-    console.log(`Grpc server running on port ${config.grpc.port}`);
+    console.log(`Grpc server running on port ${config.port}`);
   });
 }
 

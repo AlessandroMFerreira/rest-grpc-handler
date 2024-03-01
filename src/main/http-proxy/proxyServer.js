@@ -25,8 +25,8 @@ function startServer(projectRoot, config, requestCounter) {
         proxy.web(req, res, { target: path });
       }
     }
-  }).listen(config.http.port, () => {
-    console.log(`Http proxy server running on port ${config.http.port}`);
+  }).listen(config.port, () => {
+    console.log(`Http proxy server running on port ${config.port}`);
   }).on('error', (error) => {
     console.log(`Error starting http proxy server: ${error}`);
     throw error;

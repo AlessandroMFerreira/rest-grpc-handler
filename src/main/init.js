@@ -7,6 +7,7 @@ import {
   HTTP_PROXY_MOCK_FOLDER,
   PROTO_FOLDER,
   CASE_FILE,
+  WS_MOCK_FOLDER
 } from './utils.js';
 
 function createConfiguration(projectRoot) {
@@ -22,6 +23,10 @@ function createConfiguration(projectRoot) {
       },
       http: {
         port: 50052,
+        enabled: true
+      },
+      ws: {
+        port: 50053,
         enabled: true
       }
     }
@@ -48,6 +53,10 @@ function createDefaultMockFolder(projectRoot) {
 
   if (!fs.existsSync(`${projectRoot}/${HTTP_PROXY_MOCK_FOLDER}`)) {
     fs.mkdirSync(`${projectRoot}/${HTTP_PROXY_MOCK_FOLDER}`, { recursive: true });
+  }
+
+  if(!fs.existsSync(`${projectRoot}/${WS_MOCK_FOLDER}`)){
+    fs.mkdirSync(`${projectRoot}/${WS_MOCK_FOLDER}`, { recursive: true });
   }
 }
 

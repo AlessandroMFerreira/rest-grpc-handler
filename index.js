@@ -2,6 +2,7 @@
 
 import startGrpcServer from './src/main/grpc/grpcServer.js';
 import startHttpProxy from './src/main/http-proxy/proxyServer.js';
+import startWsServer from './src/main/web-socket/webSocketServer.js';
 import { init, loadConfigurationFile } from './src/main/init.js';
 
 const projectRoot = process.cwd();
@@ -11,9 +12,13 @@ init(projectRoot);
 const config = loadConfigurationFile(projectRoot);
 
 if (config?.grpc?.enabled) {
-  startGrpcServer(projectRoot, config, requestCounter);
+  startGrpcServer(projectRoot, config.grpc, requestCounter);
 }
 
 if (config?.http?.enabled) {
-  startHttpProxy(projectRoot, config, requestCounter);
+  startHttpProxy(projectRoot, config.http, requestCounter);
+}
+
+if (config?.ws?.enabled) {
+  startWsServer(projectRoot, config.ws, requestCounter);
 }
