@@ -1,8 +1,7 @@
 import http from 'http';
 import httpProxy from 'http-proxy';
 import {
-  getMockResponse,
-  resetRequestCounter
+  getMockResponse
 } from './setup.js';
 
 
@@ -14,7 +13,11 @@ function startServer(projectRoot, config, requestCounter) {
     const path = req.url.split('?')[0];
 
     if (path.includes('/reset')) {
-      resetRequestCounter(requestCounter, res);
+      requestCounter.forEach((item) => {
+        item.numberOfRequests = 0;
+      });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({}));
     } else {
       const mockedResponse = getMockResponse(projectRoot, path, req.method, requestCounter);
 
