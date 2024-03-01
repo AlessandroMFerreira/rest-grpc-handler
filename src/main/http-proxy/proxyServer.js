@@ -1,8 +1,10 @@
 import http from 'http';
 import httpProxy from 'http-proxy';
 import {
-  getMockResponse
-} from './setup.js';
+  getMockResponse,
+  resetRequestCounter,
+  sendResponse
+} from './handleRequest.js';
 
 
 // Create a proxy server
@@ -13,21 +15,12 @@ function startServer(projectRoot, config, requestCounter) {
     const path = req.url.split('?')[0];
 
     if (path.includes('/reset')) {
-      requestCounter.forEach((item) => {
-        item.numberOfRequests = 0;
-      });
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({}));
+      resetRequestCounter(requestCounter, res);
     } else {
       const mockedResponse = getMockResponse(projectRoot, path, req.method, requestCounter);
 
       if (mockedResponse) {
-        let status = mockedResponse.status ? mockedResponse.status : 200;
-        let headers = mockedResponse.headers ? mockedResponse.headers : { 'Content-Type': 'application/json' };
-        let body = mockedResponse.body ? mockedResponse.body : {};
-
-        res.writeHead(status, headers);
-        res.end(JSON.stringify(body));
+        sendResponse(mockedResponse, res);
       } else {
         proxy.web(req, res, { target: path });
       }

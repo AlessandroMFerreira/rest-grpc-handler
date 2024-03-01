@@ -1,7 +1,7 @@
 import  grpc from '@grpc/grpc-js';
 import { 
   loadProtoFiles,
-  getMockResponse } from './setup.js';
+  getMockResponse } from './handleRequest.js';
 
 function startServer(projectRoot, config, requestCounter) {
   var server = new grpc.Server();

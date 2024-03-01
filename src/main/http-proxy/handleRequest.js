@@ -3,6 +3,7 @@ import {
   HTTP_PROXY_MOCK_FOLDER,
   CASE_FILE
 } from '../utils.js';
+import { sensitiveHeaders } from 'http2';
 
 function getCaseName(projectRoot) {
   var caseName = '';
@@ -83,6 +84,25 @@ function getMockResponse(projectRoot, endPoint, method, requestCounter) {
   }
 }
 
+function resetRequestCounter(requestCounter, res) {
+  requestCounter.forEach((item) => {
+    item.numberOfRequests = 0;
+  });
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({}));
+}
+
+function sendResponse(data, res) {
+  let status = data.status ? data.status : 200;
+  let headers = data.headers ? data.headers : { 'Content-Type': 'application/json' };
+  let body = data.body ? data.body : {};
+
+  res.writeHead(status, headers);
+  res.end(JSON.stringify(body));
+}
+
 export {
-  getMockResponse
+  getMockResponse,
+  resetRequestCounter,
+  sendResponse
 }
