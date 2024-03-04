@@ -5,7 +5,6 @@ const GRPC_MOCK_FOLDER = `${MOCK_FOLDER}/grpc`;
 const HTTP_PROXY_MOCK_FOLDER = `${MOCK_FOLDER}/http-proxy`;
 const PROTO_FOLDER = `${CONFIG_FOLDER}/protos`;
 const CASE_FILE = `case.json`;
-const WS_MOCK_FOLDER = `${MOCK_FOLDER}/ws`;
 
 
 
@@ -16,6 +15,5 @@ export {
     GRPC_MOCK_FOLDER,
     HTTP_PROXY_MOCK_FOLDER,
     PROTO_FOLDER,
-    CASE_FILE,
-    WS_MOCK_FOLDER
+    CASE_FILE
 };
