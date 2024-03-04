@@ -14,7 +14,7 @@ function startServer(projectRoot, config, requestCounter) {
   http.createServer(function (req, res) {
     const path = req.url.split('?')[0];
 
-    if (path.includes('/reset')) {
+    if (path.includes('/requestCounter/reset')) {
       resetRequestCounter(requestCounter, res);
     } else {
       const mockedResponse = getMockResponse(projectRoot, path, req.method, requestCounter);
