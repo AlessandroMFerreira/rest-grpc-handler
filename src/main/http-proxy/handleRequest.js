@@ -71,7 +71,13 @@ function getMockResponse(projectRoot, endPoint, method, requestCounter) {
     if (!fs.existsSync(`${mockFolderPath}/${requestNumber}.json`)) {
       fs.mkdirSync(mockFolderPath, { recursive: true })
 
-      fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, JSON.stringify({}), 'utf8');
+      let obj = {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: {}
+      }
+
+      fs.writeFileSync(`${mockFolderPath}/${requestNumber}.json`, JSON.stringify(obj), 'utf8');
 
       return {};
     }
