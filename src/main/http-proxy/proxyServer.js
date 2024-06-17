@@ -12,7 +12,7 @@ const proxy = httpProxy.createProxyServer({});
 
 function startServer(projectRoot, config, requestCounter) {
   http.createServer(function (req, res) {
-    const path = req.url.split('?')[0];
+    const path = req.url;
 
     if (path.includes('/requestCounter/reset')) {
       resetRequestCounter(requestCounter, res);
