@@ -30,11 +30,11 @@ function startServer(projectRoot, config, requestCounter) {
   });
   server.bindAsync(`localhost:${config.port}`, grpc.ServerCredentials.createInsecure(), (err) => {
     if (err) {
-      console.log(`Error starting grpc server: ${err}`)
+      console.log(`Error starting grpc server: ${err}\n`)
       return;
     }
 
-    console.log(`Grpc server running on port ${config.port}`);
+    console.log(`Grpc server running on port ${config.port}\n`);
   });
 }
 
