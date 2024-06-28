@@ -42,7 +42,7 @@ function start(projectRoot, config, requestCounter) {
   try {
     startServer(projectRoot, config, requestCounter); 
   } catch (error) {
-    throw (error);
+    console.log(`Unable to start grpc server. Error: ${error}`);
   }
 }
 
