@@ -6,7 +6,7 @@
 
 To install `rest-grpc-handler`, run the following command:
 ```
-npm install https://github.com/AlessandroMFerreira/rest-grpc-handler
+npm i rest-grpc-handler
 ```
 
 ## Getting Started
